@@ -1,6 +1,6 @@
 # MD-ligand-receptor
 
-MD-ligand-receptor is a bioinformatics pipeline written in Python for analyzing non-covalent ligand-receptor interactions in 3D structures starting from a molecular dynamic trajectory.  Through **GROMACS**<sup>[[1]](https://www.gromacs.org/index.html)</sup> the trajectory is divided into single timestamps that are analyzed by **PLIP** (Protein-Ligand Interaction Profiler)<sup>[[2]](https://github.com/pharmai/plip)</sup>, the end results are csv and json files containing all the non-covalent interactions between the protein and ligand, each labeled with their trajectory timestamp. To better visualize and organize the output data we offer a visualizing tool.
+MD-ligand-receptor is a bioinformatics pipeline written in Python for analyzing non-covalent ligand-receptor interactions in 3D structures starting from a molecular dynamic trajectory.  Through **GROMACS**<sup>[[1]](https://www.gromacs.org/index.html)</sup> the trajectory is divided into single timestamps that are analyzed by **PLIP** (Protein-Ligand Interaction Profiler)<sup>[[2]](https://github.com/pharmai/plip)</sup>, the end results are csv and json files containing all the non-covalent interactions between the protein and ligand, each labeled with their trajectory timestamp. To better visualize and organize the output data we offer a plotly dashboard  which provide a series of interactive plots.
 
 The Python pipeline is designed for either a multicore linux server or a multi-node HPC cluster with the implementation of **MPI for Python**; data parallelism is necessary for the heavy computation needed to partition and analyze the trajectory data.  
 			
@@ -18,9 +18,9 @@ The requirements necessary to use the software:
 
 ___
 
-**GROMACS** is used to partition the trajectory into PDB files from which interaction data can be extrapolated.
+To extrapolate the interaction data, we first use **GROMACS** software, to convert each timestamp of the trajectory into a PDB file.  
 
-The singularity image of **PLIP** extracts from the PDB files the non-covalent interactions; singularity allows for a containerized version of PLIP without having to worry about its dependencies. The interactions data are then stored inside csv and json files ready to be visualized using the attached tool. 
+The singularity image of **PLIP** extracts from the PDB files the non-covalent interactions; singularity allows for a containerized version of PLIP without having to worry about its dependencies. The interactions data are then stored inside both csv and json files ready to be visualized using the attached analysis tool, which generate a plotly dashboard, which provide a series of interactive plots. 
 
 **MPI for Python** is used to divide the work among the processes; in order to install Python packages, it is often recommended to use a virtual environment:
 #### Build a virtual environment:
@@ -62,27 +62,27 @@ The data pipeline script `MD-Ligand-Receptor.py`  offers the following options:
 GROMACS library offers the `trjconv` command to partition the trajectory every 10 picoseconds from the *start timestamp* until the *end timestamp*; both must be specified in picoseconds. 
 To identify the ligand's atoms inside the pdb an identifier is needed (e.g. *\"EHD\"*) , submit it with the `-l` option.
 
-All the registered interactions will be stored in CSV and JSON files inside the folder *"results"* at the end of the given output path.
+All the registered interactions will be stored both in CSV and JSON files inside the folder *"results"* at the end of the given output path.
 
 The data pipeline script  `MD-Ligand-Receptor.py` can be launched through the command line.
 #### Examples
 
-Most MPI programs can be run with the command **mpiexec**. Running the script via command line looks like: 
+For **NON-HPC enviroments**, most MPI programs can be run with the command **mpiexec**. Running the script via command line looks like: 
 
     mpiexec -n 5 python MD-Ligand-Receptor.py -s ./md_example/molecular_dynamics.tpr -f ./md_example/molecular_dynamics.xtc -b 0 -e 100 -l EHD
 
-Running the script in HPC environments that use Slurm as scheduler may require the following command:
+Running the script in **HPC environments that use Slurm** as scheduler may require the following command:
 
     srun -A account_X -p partition_X -n 5 python MD-Ligand-Receptor.py -s ./md_example/molecular_dynamics.tpr -f ./md_example/molecular_dynamics.xtc -b 0 -e 100 -l EHD
 
-Use the recommended command for your environment to run MPI jobs and specify the number of processes; note that to reduce execution time adjust the number of workers proportionally to the difference between start and end time frames.  
+Use the recommended command for your environment to run MPI jobs and specify the number of processes (-n  mpiexec/srun option); note that to reduce execution time adjust the number of workers proportionally to the difference between start and end time frames. The option -s sets the path to the system topology file (.tpr), the option -f sets the path to the trajectory file (.xtc), -b (begin) and -e (end) set respectively the first and the last timestamp used to extract interaction data from the trajectory, -l option set the Ligand identifier in PDB file. -A and -p options are needed with a Slurm enviroment to set the account and the queue partition used.
 
 After launch the program will create a "**work**" folder; here each worker will create its own folder where it will store its data. 
 After completion a "**result**" folder will be created where all the final interaction data will be saved. The "work" folder will be automatically deleted in case of a successful termination. 
 
 ---
 #### Restart
-Since many schedulers in HPC enviroments may interrupt a program after a limited amount of time, we offer the option to **limit the execution time** and save the progress. The analysis can be restarted by using the same command with the option [-r].  
+Since many schedulers in HPC enviroments may interrupt a program after a limited amount of time (each partition queue has its own setted maximum wall time), we offer the option to **limit the execution time** and save the progress. The analysis can be restarted by using the same command plus the option [-r].  
 
 This command will restart the execution of the previous example if time limit was reached.
 
@@ -91,15 +91,15 @@ This command will restart the execution of the previous example if time limit wa
 ---
 
 ### Output Data
-The atoms' interactions are stored inside JSON and CSV files. 
+The atoms' interactions are stored both inside JSON and CSV files. 
 
 Some attributes are represented as lists where each element dictates the value of that attribute in a particular timestamps. 
-Note that the values are **not ordered**, refer at the same index in the attribute "ps" to locate the correct timestamp of that value. 
+Note that the values are **not ordered**, refer at the same index in the attribute "ps" (picosecond) to locate the correct timestamp of that value. 
 For example:
 
-    don_angle:= [12.312, 14.132, 31.131]
+    don_angle:= [12.312, 14.132, 31.131] 
     ps:= [20, 10, 40]
-   Donor angle assumes value 14.132 at timestamp 10.
+   Donor angle (don_angle) assumes value 14.132 at timestamp 10.
    
 #### Interaction Attributes
 Type | Attribute  | Description |
@@ -124,29 +124,33 @@ pi_stack | angle | Angle between the ring planes |
 
 ## 3: Visualitization tool
 To analise the retrieved data, we offer a visualization tool which provides a general overview of the interactions during the timeline of the dynamic. 
-The analisys can be visualized on a plotly dashboard, which provide a series of interactive plots:
+The analisys can be visualized on a plotly dashboard (https://plotly.com/python/), which provides a series of interactive plots:
 
 #### Per atom analisys of the interactions
-This helps to understand the quantity and the type of interactions made by each atoms. 
-A modifiable threshold is provided in order to filter the atoms that does not make enough interactions. 
+This plot visualize the quantity and the type of interactions made by each atom. 
+A modifiable threshold is provided on the dashboard, in order to filter the atoms that does not make enough interactions. 
 **NOTE**: if an atom does more than one interaction in the same timeframe, only one is considered.
+The following image shows an example of the atom permanence plot filtered with a 1% treshold.
 ![atoms_permanence](images/atoms_permanence.png)
 
 #### Per bondtype analisys
-This helps to understand in how many timeframes a specific type of interaction is present. 
-**NOTE**: the plot visualizes if a particulare interaction is present in a timeframe, but it does not take in account if there are several of those in the same timeframe.
+This plot visualize in how many timeframes a specific type of interaction is present. 
+**NOTE**: the plot visualizes if a particular interaction is present in a timeframe, but it does not take in account if there are several of those in the same timeframe.
+The following image shows an example of the described plot.
 ![bondtype](images/bondtype_permanence.png)
 
-#### Heatmaps of ligands interactions with DNA and Aminoacids
-Two heatmaps are provided showing for each ligand's atom the percentage of timeframes in which an interaction with a DNA or an aminoacid is present. 
-By default, the heatmaps consider all types of interaction. 
-However, types can be filtered just above the graphs; hence, it is possible to view an heatmap reffering only to the selected bondtype.
+#### Heatmaps of ligand interactions with nucleotides and aminoacids
+The dashboard provides two heatmaps, one for nucleotides and one for aminoacids interactions, showing for each ligand's atom the percentage of timeframes in which an interaction with a nucleotide or an aminoacid is present. 
+By default, the heatmap considers all types of interactions. 
+However, types of interactions can be filtered through a bar located above the graphs on the dashboard; hence, it is possible to view an heatmap refering only to the selected interactions.
+The following image is an example that shows the heatmap of all types of interactions between ligand's atoms (y axes) and a protein's aminoacids (x axis).
 ![heatmap](images/heatmap.png)
 
-#### Timeline activities of DNA and Aminoacids
-These graphs show, for each nucleic group and aminoacid, in which timeframes an interaction is present. 
-This helps to see at wich steps of the simulation there is more activity. 
-A modifiable threshold is provided in order to filter the DNA or aminoacids that have low permances.
+#### Timeline activities of nucleotides and Aminoacids
+These horizontal histograms shows, for each nucleic group and aminoacid, in which timeframes an interaction is present. 
+This helps to visualize at which steps of the simulation the ligand-receptor interactions are more stable. 
+On the dashboard, a modifiable threshold is provided in order to easily filter the nucleotides or aminoacids that have low permance.
+The following image shows the the timeline of the interactions performed by a protein's aminoacids,
 ![activity](images/atoms_activity.png)
 
 #### Per atom timeline activities
