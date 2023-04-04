@@ -4,7 +4,7 @@ MD-ligand-receptor is a Python script for analyzing non-covalent ligand-receptor
 
 The Python script is designed for either a multicore linux server or a multi-node HPC cluster with the implementation of **MPI for Python**; data parallelism is necessary for the heavy computation needed to partition and analyze the trajectory data.  
 
-![pipeline](images/pipeline.jpg)
+![pipeline](images/bioinf.jpg)
 			
 ![pipeline MPI](images/pipeline_MPI.jpg)
 ## Usage
