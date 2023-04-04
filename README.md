@@ -3,8 +3,6 @@
 MD-ligand-receptor is a Python script for analyzing non-covalent ligand-receptor interactions in 3D structures starting from a molecular dynamic trajectory.  Through **GROMACS**<sup>[[1]](https://www.gromacs.org/index.html)</sup> the trajectory is divided into single timestamps that are analyzed by **PLIP** (Protein-Ligand Interaction Profiler)<sup>[[2]](https://github.com/pharmai/plip)</sup>, the end results are csv and json files containing all the non-covalent interactions between the protein and ligand, each labeled with their trajectory timestamp. To better visualize and organize the output data we offer a visualizing tool.
 
 The Python script is designed for either a multicore linux server or a multi-node HPC cluster with the implementation of **MPI for Python**; data parallelism is necessary for the heavy computation needed to partition and analyze the trajectory data.  
-
-![pipeline](images/bioinf .jpg)
 			
 ![pipeline MPI](images/pipeline_MPI.jpg)
 ## Usage
