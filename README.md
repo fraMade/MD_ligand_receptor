@@ -128,20 +128,24 @@ The analisys can be visualized on a plotly dashboard, which provide a series of 
 This helps to understand the quantity and the type of interactions made by each atoms. 
 A modifiable threshold is provided in order to filter the atoms that does not make enough interactions. 
 **NOTE**: if an atom does more than one interaction in the same timeframe, only one is considered.
+![atoms_permanence](images/atoms_permanence.png)
 
 #### Per bondtype analisys
 This helps to understand in how many timeframes a specific type of interaction is present. 
 **NOTE**: the plot visualizes if a particulare interaction is present in a timeframe, but it does not take in account if there are several of those in the same timeframe.
+![bondtype](images/bondtype_permanence.png)
 
 #### Heatmaps of ligands interactions with DNA and Aminoacids
 Two heatmaps are provided showing for each ligand's atom the percentage of timeframes in which an interaction with a DNA or an aminoacid is present. 
 By default, the heatmaps consider all types of interaction. 
 However, types can be filtered just above the graphs; hence, it is possible to view an heatmap reffering only to the selected bondtype.
+![heatmap](images/heatmap.png)
 
 #### Timeline activities of DNA and Aminoacids
 These graphs show, for each nucleic group and aminoacid, in which timeframes an interaction is present. 
 This helps to see at wich steps of the simulation there is more activity. 
 A modifiable threshold is provided in order to filter the DNA or aminoacids that have low permances.
+![activity](images/atoms_activity.png)
 
 #### Per atom timeline activities
 This graph shows, for the selected atom, at which timestamp a specific type of interaction is present. 
