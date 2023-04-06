@@ -5,8 +5,10 @@ Through **GROMACS**<sup>[[1]](https://www.gromacs.org/index.html)</sup>, the tra
 In order to better visualize and organize the output data, we offer a plotly dashboard  which provide a series of interactive plots.
 
 The Python pipeline is designed for use within either a multicore linux server or a multi-node HPC cluster with the implementation of **MPI for Python**; data parallelism is necessary for the heavy computation needed to partition and analyze the trajectory data.  
-			
-![pipeline MPI](images/pipeline_MPI.jpg)
+The following figure shows an high level overview of the Software's pipeline. The software take as input a .xtc and .tpr file, divide the workload for parallel computing, will then produce .pdb files which are analyzed by plip, the results are then merged into json and csv files, ready to be visualized.
+
+![pipeline MPI](images/pipeline_workflow.jpg)
+
 ## Usage
 
 This README provides instructions for setup and usage.
@@ -151,15 +153,17 @@ The following image shows an example of the described plot.
 The dashboard provides two heatmaps, one for nucleotides and one for aminoacids interactions, showing for each ligand's atom the percentage of timeframes in which an interaction with a nucleotide or an aminoacid is present. 
 By default, the heatmap considers all types of interactions. 
 However, types of interactions can be filtered through a bar located above the graphs on the dashboard; hence, it is possible to view a heatmap referring only to the selected interactions.
-The following image is an example that shows the heatmap of all types of interactions between ligand's atoms (y axes) and a protein's aminoacids (x axis).
-![heatmap](images/heatmap.png)
+The following image is an example that shows the heatmap of all types of interactions between ligand's atoms (y axes) and a nucletoides (x axis) (left figure) ligand's atoms (y axes) and a protein's aminoacids (x axis) (right figure).
+
+![heatmap](images/heatmaps.jpg)
 
 #### Timeline activities of nucleotides and Aminoacids
 These horizontal histograms shows, for each nucleic group and aminoacid, in which timeframes an interaction is present. 
 This helps to visualize at which steps of the simulation the ligand-receptor interactions are more stable. 
 On the dashboard, a modifiable threshold is provided in order to easily filter the nucleotides or aminoacids that have low permanence.
 The following image shows the the timeline of the interactions performed by a protein's aminoacids,
-![activity](images/atoms_activity.png)
+
+![activity](images/aminoacid_and_nucleotides_activities.jpg)
 
 #### Per atom timeline activities
 This graph shows, for the selected atom, at which timestamp a specific type of interaction is present. 
@@ -168,12 +172,15 @@ Above this graph there is a dropdown menu where the user can select the atom.
 #### Timeline activities between an atom and a residual
 This graph shows at which timestamp a specific type of interaction, between the selected atom and the residual, is present.
 
+![couple_activity](images/n10_arg364.jpg)
+
 ## Visualization tutorial
 #### Dependencies
-Install the following dependencies (it is recommended to use a conda environment):
+Install the following dependencies (it is recommended to use a [conda environment](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) ):
  1. install dash. $
 
     `$ pip install dash` or `$ conda install dash`
+
  2.  install jupyter dash. $
 	 
 	 `$ pip install jupyter-dash` or `$ conda install -c conda-forge jupyter-dash`
@@ -186,19 +193,48 @@ Install the following dependencies (it is recommended to use a conda environment
 #### How to
 1. open the anaconda prompt shell
 
-2. change the current directory to the downloaded one
+2. (optional) activate your conda environment
+    `$ conda activate your_environment_name`
 
-3. run the command `$ jupyter notebook ./pdb_analysis/dashboard.ipynb`
+3. change the current directory to the downloaded one
 
-4. a new tab will be present in your browser with the running jupyter server
+4. run the command `$ jupyter notebook ./pdb_analysis/dashboard.ipynb`
 
-5. run all the cells 
+![prompt](images/prompt_example.jpg)
 
-6. The **last** cell should output a message like this: Dash app running on http://127.0.0.1:8085/
+5. a new tab will be present in your browser with the running jupyter server
 
-7. click on the given link and the dashboard will open on another tab
+6. run all the cells 
 
-8. at this point, drag and drop the required files, as obtained from the main script.
+![run_all](images/notebook_example.jpg)
+
+7. The **last** cell should output a message like this: Dash app running on http://127.0.0.1:8085/
+
+![link](images/notebook_link.jpg)
+
+8. click on the given link and the dashboard will open on another tab
+
+9. at this point, drag and drop the required files, as obtained from the main script.
+
+#### Additional usage
+
+1. It is possible to save the produced plots by clicking on the option provided by the plotly overlay bar
+
+2. It is possible to save the data used to produce the plot, in a csv file, by clicking on the download button below the plot
+
+![usge](images/interactions_example.jpg)
+
+3. From the "Per atom analisys of the interactions" plot it is possible to filter out atoms with low permanence percentage by using the slider above the plot
+
+4. From the heatmaps it is possible to "consider" only a specific subset of bond types, using the selection bar above the plots. As example the user can choose to consider only the hydrogen bonds; the resulting heatmaps will displays permanence percentages according only to the selected subset of bond types.
+
+![bondtype_sel](images/heatmap_bondtype_selection.jpg)
+
+5. From the "Timeline activities of nucleotides and Aminoacids" plot, it is possible to filter out aminoacids and nucleotides with low permanence percentage using the slider above the plot
+
+6. The last two plots are generated after the selection of the interested atoms. Above the plots there are two selection bar, the first specify the ligand's atom the user is interested to, the second specify the residue. The last plot will show the interactions done by the selected choices. (It is possible to write on the selection bar to fastly search the interested atom or residue).
+
+![couple_sel](images/couple_selections.jpg)
 
 #### References
 ##### plip:
