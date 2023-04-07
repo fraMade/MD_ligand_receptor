@@ -100,6 +100,9 @@ This command will restart the execution of the previous example if the time limi
 
 ---
 
+#### Benchmark
+Parallel softwares requires a different number of processes and threads accordingly to the hardware specifications and the workload. The user will have to decide the right amount of process to use, based on their hardware resources and the size of the input (Trajectory file). To achieve the best performance the user will have to run a few short executions of the software with different settings (remember that using all the resources available does not always produce the best performances).
+
 ### Output Data
 The atoms' interactions are stored both inside JSON and CSV files. 
 
