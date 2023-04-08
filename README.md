@@ -235,7 +235,7 @@ Install the following dependencies (it is recommended to use a [conda environmen
 
 5. From the "Timeline activities of nucleotides and Aminoacids" plot, it is possible to filter out aminoacids and nucleotides with low permanence percentage using the slider above the plot
 
-6. The last two plots are generated after the selection of the interested atoms. Above the plots there are two selection bar, the first specify the ligand's atom the user is interested to, the second specify the residue. The last plot will show the interactions done by the selected choices. (It is possible to write on the selection bar to fastly search the interested atom or residue).
+6. The last two plots are generated after the selection of the interested atoms. Above the plots there are two selection bar, the first specify the ligand's atom the user is interested to, the second specify the residue. The last plot will show the interactions done by the selected choices. (It is possible to write on the selection bar to quicly search the interested atom or residue).
 
 ![couple_sel](images/couple_selections.jpg)
 
