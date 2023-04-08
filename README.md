@@ -7,7 +7,7 @@ In order to better visualize and organize the output data, we offer a plotly das
 The Python pipeline is designed for use within either a multicore linux server or a multi-node HPC cluster with the implementation of **MPI for Python**; data parallelism is necessary for the heavy computation needed to partition and analyze the trajectory data.  
 The following figure shows an high level overview of the Software's pipeline. The software take as input a .xtc and .tpr file, divide the workload for parallel computing, will then produce .pdb files which are analyzed by plip, the results are then merged into json and csv files, ready to be visualized.
 
-![pipeline MPI](images/pipeline_workflow.jpg)
+![pipeline](images/pipeline.jpg)
 
 ## Usage
 
