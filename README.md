@@ -83,7 +83,9 @@ Running the script in **HPC environments that use Slurm** as scheduler may requi
 
 Use the recommended command for your environment to run MPI jobs and specify the number of processes (-n  mpiexec/srun option); note that to reduce execution time adjust the number of workers proportionally to the difference between start and end time frames. 
 The option -s sets the path to the system topology file (.tpr); the option -f sets the path to the trajectory file (.xtc); -b (begin) and -e (end) set, respectively, the first and the last timestamp used to extract interaction data from the trajectory; the -l option sets the Ligand identifier in PDB file. 
-The -A and -p options are needed with a Slurm enviroment to set the account and the queue partition used.
+The -A and -p options are needed with a Slurm enviroment to set the account and the queue partition used. 
+
+As example we provide `slurm_script_example.sh`, the batch script shows the basic structure required to launch the pipeline in a Slurm enviroment. To properly execute the program we declare *sbatch* directives: --job-name specify the job name, --time set a limit to execution time (usually 24h), -n request the allocation of computational resource (must be equal to the value assigned to the -n option for the mpi command), --account and --partition set the account and the queue partition used, --output and --error assign the standard output and standard error to a text file. This is a **basic template**, we invite the user to explore sbatch directives on this [page](https://slurm.schedmd.com/sbatch.html).
 
 After launch, the program will create a "**work**" folder; here each worker will create its own folder, in which it will store its data. 
 After completion, a "**result**" folder will be created where all the final interaction data will be saved. 
@@ -101,7 +103,7 @@ This command will restart the execution of the previous example if the time limi
 ---
 
 #### Benchmark
-Parallel softwares requires a different number of processes and threads accordingly to the hardware specifications and the workload. The user will have to decide the right amount of process to use, based on their hardware resources and the size of the input (Trajectory file). To achieve the best performance the user will have to run a few short executions of the software with different settings (remember that using all the resources available does not always produce the best performances).
+Parallel softwares requires a different number of processes and threads accordingly to the hardware specifications and the workload. The user will have to decide the right amount of process to use, based on their hardware resources and the size of the input (Trajectory file). To achieve the best performance the user will have to run a few short executions of the software with different settings (remember that using all the resources available does not always produce the best performances). For reference to complete the analysis on a trajectory of 100K picoseconds it required 1 hour and 20 minutes with 50 processes and 20 minutes with 100 processes. 
 
 ### Output Data
 The atoms' interactions are stored both inside JSON and CSV files. 
