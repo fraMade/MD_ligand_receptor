@@ -9,6 +9,10 @@ The following figure shows an high level overview of the Software's pipeline. Th
 
 ![pipeline](images/pipeline.jpg)
 
+##Download
+
+The singularity image of PLIP is **not** part of the repository; the pipeline, visualization tool, and PLIP image are available under [**releases**](https://github.com/fraMade/MD_ligand_receptor/releases)
+
 ## Usage
 
 This README provides instructions for setup and usage.
