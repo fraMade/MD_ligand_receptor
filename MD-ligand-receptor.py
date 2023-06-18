@@ -81,6 +81,7 @@ def pdb_pipeline(topol, trj, i_start, i_end, restart, dnaLig, time_limit, worker
     elapsed_time = 0
     #print("Rank: {} | times: {} - {}".format(worker_id, i_start, i_end))
     pdb_start = i_start
+    pdb_end = pdb_start + N_PDB
 
     #set plip comand if dna/rna is to be trated as ligand or receptor
     plip_comand = 'singularity run -H $PWD plip.simg --dnareceptor'
@@ -141,7 +142,7 @@ def pdb_pipeline(topol, trj, i_start, i_end, restart, dnaLig, time_limit, worker
 
         if set_error != 0:
             print("Error! Saving status for worker {} \nUse the restart option [-r] with the same number of processes to allow a retry and complete the analysis.".format(worker_id))
-            saveStatus(save_path, pdb_start, pdb_end, worker_id, size)
+            saveStatus(save_path, pdb_start, i_end, worker_id, size)
             saveToJSON(table, json_path)
 
             return table, 1
@@ -150,7 +151,7 @@ def pdb_pipeline(topol, trj, i_start, i_end, restart, dnaLig, time_limit, worker
 #------------out while----------#
 
     #save status
-    saveStatus(save_path, pdb_start, pdb_end, worker_id, size)
+    saveStatus(save_path, pdb_start, i_end, worker_id, size)
 
     #salve table to json file
     saveToJSON(table, json_path)
@@ -243,8 +244,8 @@ def hbondsFields(root, table, ps):
             table["hbonds"][bondID] = { "acc/donor-id": (acceptoridx, donoridx), "ps":[], "protisdon":bool(field.find('protisdon').text), "restype":field.find('restype').text, "resnr":field.find('resnr').text , "dist_h-a":[], "dist_d-a":[],
                  "don_angle":[],"donortype":field.find('donortype').text , "acceptortype":field.find('acceptortype').text}
 
-        for x in table["hbonds"][bondID].keys():
-            if isinstance(table["hbonds"][bondID][x], list) and x!="ps":
+        for x in table["hbonds"][bondID].keys() - {"acc/donor-id", "ps"}:
+            if isinstance(table["hbonds"][bondID][x], list):
                 table["hbonds"][bondID][x].append(float(field.find(x).text))
 
         # the interaction timestamp in picoseconds
@@ -359,8 +360,8 @@ def waterBridges(root, table, ps):
             table["water-bridge"][bondID] = {"acc/don/wat-id":(acceptor_idx, donor_idx, water_idx), "ps":[], "restype":field.find('restype').text , "resnr":field.find('resnr').text,
             "dist_a-w":[], "dist_d-w":[], "don_angle": [], "water_angle":[], "donortype":field.find('donortype').text, "acceptortype":field.find('acceptortype').text }
 
-        for x in table["water-bridge"][bondID].keys() :
-                if isinstance(table["water-bridge"][bondID][x], list) and x != "ps":
+        for x in table["water-bridge"][bondID].keys() -{"ps", "acc/don/wat-id"} :
+                if isinstance(table["water-bridge"][bondID][x], list):
                     table["water-bridge"][bondID][x].append(float(field.find(x).text))
 
         # the interaction timestamp in picoseconds
